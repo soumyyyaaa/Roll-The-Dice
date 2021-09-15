@@ -144,6 +144,7 @@ class MP {
 
         document.querySelector(".btn--mp").innerHTML = "⌛ Disconnecting...";
         off(ref(MP.db, `${lobby}/moves/p${1-selfPlayer}`));
+        off(ref(MP.db, `${lobby}/data/p${1-selfPlayer}`));
 
         if (MP.waiting)
             set(ref(MP.db, 'mm/waiting'), false);
