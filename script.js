@@ -88,11 +88,11 @@ class MP {
             onValue(ref(MP.db, `${lobby}/moves/p${1-selfPlayer}`), snapshot => {
                 if (!snapshot.exists()) return;
 
-                if (snapshot.val() === 'hold')
+                var move = snapshot.val().move;
+                if (move === 'hold')
                     hold();
-                else if (snapshot.val().startsWith('roll'))
-                    roll(parseInt(snapshot.val().substring(5)));
-
+                else if (move.startsWith('roll'))
+                    roll(parseInt(move.substring(5)));
             });
 
             if (selfPlayer === 0) {
@@ -116,11 +116,17 @@ class MP {
     }
 
     static sendMoveHold() {
-        set(ref(MP.db, `${lobby}/moves/p${selfPlayer}`), 'hold');
+        set(ref(MP.db, `${lobby}/moves/p${selfPlayer}`), {
+            id: Date.now(),
+            move: 'hold'
+        });
     }
 
     static sendMoveRoll(num) {
-        set(ref(MP.db, `${lobby}/moves/p${selfPlayer}`), `roll ${num}`);
+        set(ref(MP.db, `${lobby}/moves/p${selfPlayer}`), {
+            id: Date.now(),
+            move: `roll ${num}`
+        });
     }
 
     static disconnect() {
