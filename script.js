@@ -233,14 +233,18 @@ function newGame() {
 document.getElementById('btnNew').addEventListener('click', newGame);
 document.getElementById('btnMp').addEventListener('click', MP.connect);
 document.getElementById('btnRoll').addEventListener('click', () => {
-    if (activePlayer === selfPlayer)
-        MP.sendMoveRoll(roll())
+    if (MP.connected) {
+        if (activePlayer === selfPlayer)
+            MP.sendMoveRoll(roll());
+    } else roll();
 });
 document.getElementById('btnHold').addEventListener('click', () => {
-    if (activePlayer === selfPlayer) {
-        hold();
-        MP.sendMoveHold();
-    }
+    if (MP.connected) {
+        if (activePlayer === selfPlayer) {
+            hold();
+            MP.sendMoveHold();
+        }
+    } else hold();
 });
 
 window.addEventListener('unload', MP.disconnect());
