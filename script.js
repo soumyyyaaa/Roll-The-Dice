@@ -136,6 +136,7 @@ class MP {
     static opponentLeft() {
         document.querySelector(".btn--mp").innerHTML = "🏃‍♀️ Opp. left";
         playing = false;
+        off(ref(MP.db, `${lobby}/data/p${1-selfPlayer}`));
     }
 
     static disconnect() {
