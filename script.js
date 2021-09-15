@@ -83,24 +83,28 @@ class MP {
             MP.connected = true;
 
             // join (set up) that lobby
-            set(ref(MP.db, `${lobby}/data/j${selfPlayer}`), true);
+            set(ref(MP.db, `${lobby}/data/p${selfPlayer}`), true);
             document.getElementById(`name--${selfPlayer}`).innerHTML = "YOU"
-            onValue(ref(MP.db, `${lobby}/moves/p${1-selfPlayer}`), snapshot => {
-                if (!snapshot.exists()) return;
+            onValue(ref(MP.db, `${lobby}/moves/p${1-selfPlayer}`), ss => {
+                if (!ss.exists()) return;
 
-                var move = snapshot.val().move;
+                var move = ss.val().move;
                 if (move === 'hold')
                     hold();
                 else if (move.startsWith('roll'))
                     roll(parseInt(move.substring(5)));
             });
+            onValue(ref(MP.db, `${lobby}/data/p${1-selfPlayer}`), ss => {
+                if (ss.exists() && !ss.val())
+                    MP.opponentLeft();
+            });
 
             if (selfPlayer === 0) {
                 document.querySelector(".btn--mp").innerHTML = "⌛ Waiting...";
-                onValue(ref(MP.db, `${lobby}/data`), snapshot => {
-                    if (!snapshot.exists()) return;
+                onValue(ref(MP.db, `${lobby}/data`), ss => {
+                    if (!ss.exists()) return;
                     if (MP.waiting) {
-                        if (snapshot.val()[`j${1-selfPlayer}`]) {
+                        if (ss.val()[`p${1-selfPlayer}`]) {
                             MP.waiting = false;
                             document.querySelector(".btn--mp").innerHTML = "🎲 Joined";
                             playing = true;
@@ -129,12 +133,22 @@ class MP {
         });
     }
 
+    static opponentLeft() {
+        document.querySelector(".btn--mp").innerHTML = "🏃‍♀️ Opp. left";
+        playing = false;
+    }
+
     static disconnect() {
         if (!MP.connected) return;
 
         document.querySelector(".btn--mp").innerHTML = "⌛ Disconnecting...";
         off(ref(MP.db, `${lobby}/moves/p${1-selfPlayer}`));
-        ref(MP.db, `${lobby}`).delete();
+
+        if (MP.waiting)
+            set(ref(MP.db, 'mm/waiting'), false);
+        else
+            set(ref(MP.db, `${lobby}/data/p${selfPlayer}`), false);
+
         document.querySelector(".btn--mp").innerHTML = "🎲 Multiplayer";
         MP.connected = false;
     }
