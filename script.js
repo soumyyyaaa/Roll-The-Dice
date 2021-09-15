@@ -228,6 +228,9 @@ function newGame() {
     diceEl.classList.add('hidden');
     player0El.classList.add('player--active');
     player1El.classList.remove('player--active');
+
+    document.getElementById('name--0').innerHTML = 'Player 1';
+    document.getElementById('name--1').innerHTML = 'Player 2';
 }
 
 document.getElementById('btnNew').addEventListener('click', newGame);
