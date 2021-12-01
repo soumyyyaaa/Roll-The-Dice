@@ -21,6 +21,7 @@ let playing = true;
 let lobby = 0;
 var mpBtnDisabled = false;
 var selfPlayer = 0;
+let audio = new Audio('ding.mp3');
 
 class MP {
     static initialized = false;
@@ -108,12 +109,14 @@ class MP {
                             MP.waiting = false;
                             document.querySelector(".btn--mp").innerHTML = "🎲 Joined";
                             playing = true;
+                            audio.play();
                             off(ref(MP.db, `${lobby}/data`));
                         } else return;
                     }
                 })
             } else {
                 document.querySelector(".btn--mp").innerHTML = "🎲 Joined";
+                audio.play();
                 playing = true;
             }
         })
